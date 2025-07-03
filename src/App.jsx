@@ -5,7 +5,7 @@ import './styles/App.css';
 
 const App = () => {
   return (
-    <Router>
+    <Router basename="/AgenticWebImplementation">
       <div>
         <Routes>
           <Route path="/" element={<Home />} />
