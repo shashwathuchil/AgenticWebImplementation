@@ -1,4 +1,3 @@
-import { log } from '@tensorflow/tfjs';
 import { useState } from 'react';
 import pdfToText from 'react-pdftotext';
 
@@ -30,10 +29,15 @@ export default function usePdfToText() {
           setLoading(false);
         })
         .catch((err) => {
-          setError('Failed to extract text from PDF.');
-          setExtractSuccess(false);
-          console.log('Error extracting text:', err);
-          setLoading(false);
+          if(file === 'reset') {
+            setText('');
+            setLoading(false);
+            setExtractSuccess(false);
+          } else{
+            setError('Failed to extract text from PDF.');
+            setExtractSuccess(false);
+            console.log('Error extracting text:', err);
+            setLoading(false);}
         });
     } catch (e) {
       setLoading(false);
