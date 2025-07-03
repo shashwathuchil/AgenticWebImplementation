@@ -1,0 +1,114 @@
+/* ChatGPT-like UI for PDF QnA */
+.chatgpt-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #23272f;
+    border-radius: 12px;
+    box-shadow: 0 2px 24px 0 #00000033;
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+.chatgpt-header {
+    padding: 24px 24px 12px 24px;
+    border-bottom: 1px solid #343541;
+    background: #23272f;
+    border-radius: 12px 12px 0 0;
+}
+.chatgpt-header h1 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin: 0 0 8px 0;
+}
+.chatgpt-file-input {
+    margin-top: 8px;
+    color: #fff;
+}
+.chatgpt-info {
+    color: #aaa;
+    margin-top: 8px;
+}
+.chatgpt-error {
+    color: #ff6b6b;
+    margin-top: 8px;
+}
+.chatgpt-chat-window {
+    flex: 1;
+    padding: 24px;
+    background: #343541;
+    overflow-y: auto;
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    flex-direction: column;
+}
+.chatgpt-welcome {
+    color: #aaa;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 1.1rem;
+}
+.chatgpt-message {
+    display: flex;
+    margin-bottom: 16px;
+}
+.chatgpt-message.user {
+    justify-content: flex-end;
+}
+.chatgpt-message.ai {
+    justify-content: flex-start;
+}
+.chatgpt-message-content {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #444654;
+    color: #fff;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.chatgpt-message.user .chatgpt-message-content {
+    background: #19c37d;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 12px;
+}
+.chatgpt-message.ai .chatgpt-message-content {
+    background: #444654;
+    color: #fff;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 12px;
+}
+.chatgpt-input-row {
+    display: flex;
+    padding: 16px 24px;
+    border-top: 1px solid #343541;
+    background: #23272f;
+    border-radius: 0 0 12px 12px;
+}
+.chatgpt-input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    background: #343541;
+    color: #fff;
+    outline: none;
+}
+.chatgpt-send-btn {
+    margin-left: 12px;
+    padding: 0 24px;
+    border-radius: 8px;
+    border: none;
+    background: #19c37d;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.chatgpt-send-btn:disabled {
+    background: #444654;
+    cursor: not-allowed;
+}
