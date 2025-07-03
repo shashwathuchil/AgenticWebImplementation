@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/AgenticWebImplementation/static/css/main.676b137f.css",
+    "main.js": "/AgenticWebImplementation/static/js/main.f801b1dc.js",
+    "index.html": "/AgenticWebImplementation/index.html",
+    "main.676b137f.css.map": "/AgenticWebImplementation/static/css/main.676b137f.css.map",
+    "main.f801b1dc.js.map": "/AgenticWebImplementation/static/js/main.f801b1dc.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.676b137f.css",
+    "static/js/main.f801b1dc.js"
+  ]
+}
