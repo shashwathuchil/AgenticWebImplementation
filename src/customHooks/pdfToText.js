@@ -1,3 +1,4 @@
+import { log } from '@tensorflow/tfjs';
 import { useState } from 'react';
 import pdfToText from 'react-pdftotext';
 
@@ -9,6 +10,7 @@ export default function usePdfToText() {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [extractSuccess, setExtractSuccess] = useState(false);
 
   /**
    * Extracts text from a PDF File object
@@ -18,21 +20,28 @@ export default function usePdfToText() {
     setLoading(true);
     setError('');
     setText('');
+    setExtractSuccess(false);
     try {
       pdfToText(file)
         .then((text) => {
           setText(text);
+          console.log('Extracted text:', text);
+          setExtractSuccess(true);
           setLoading(false);
         })
         .catch((err) => {
           setError('Failed to extract text from PDF.');
+          setExtractSuccess(false);
+          console.log('Error extracting text:', err);
           setLoading(false);
         });
     } catch (e) {
       setLoading(false);
+      setExtractSuccess(false);
+      console.log('Error extracting text:', e);
       setError('Error reading PDF file.');
     }
   };
 
-  return { text, error, loading, extractTextFromPdf };
+  return { text, error, loading, extractSuccess, extractTextFromPdf };
 }
