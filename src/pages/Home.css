@@ -69,6 +69,27 @@
     margin-top: 8px;
     color: #fff;
 }
+.chatgpt-file-info {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+    gap: 12px;
+    color: #aaa;
+}
+.chatgpt-remove-btn {
+    padding: 4px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.chatgpt-remove-btn:hover {
+    background: #d43f3f;
+}
+
 .chatgpt-info {
     color: #aaa;
     margin-top: 8px;
