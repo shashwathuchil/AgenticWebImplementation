@@ -3,7 +3,7 @@ import usePdfToText from '../customHooks/pdfToText';
 import useQnA from '../customHooks/aiLogic';
 import './Home.css';
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 
 
 const Home = () => {
@@ -24,7 +24,7 @@ const Home = () => {
             return;
         }
         if (file.size > MAX_FILE_SIZE) {
-            setError('File size must be less than 2MB.');
+            setError('File size must be less than 4MB.');
             return;
         }
         await extractTextFromPdf(file);
