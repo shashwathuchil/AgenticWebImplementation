@@ -1,3 +1,40 @@
+/* Modal styles for error display */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-content {
+    background: #23272f;
+    color: #fff;
+    padding: 32px 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 24px 0 #00000033;
+    min-width: 320px;
+    max-width: 90vw;
+    text-align: center;
+}
+.modal-close-btn {
+    margin-top: 24px;
+    padding: 8px 32px;
+    border-radius: 8px;
+    border: none;
+    background: #19c37d;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.modal-close-btn:hover {
+    background: #13a06d;
+}
 /* ChatGPT-like UI for PDF QnA */
 .chatgpt-container {
     max-width: 600px;
@@ -9,6 +46,13 @@
     flex-direction: column;
     min-height: 80vh;
     font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+@media (max-width: 600px) {
+  .chatgpt-container {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 }
 .chatgpt-header {
     padding: 24px 24px 12px 24px;
