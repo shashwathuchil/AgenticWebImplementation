@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import usePdfToText from '../customHooks/pdfToText';
 import useQnA from '../customHooks/aiLogic';
+import './Home.css';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 
 const Home = () => {
-    const [selectedFile, setSelectedFile] = useState(null);
+    // const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState('');
-    const [uploadSuccess, setUploadSuccess] = useState(false);           
-    const { text, error: extractError, loading, extractTextFromPdf } = usePdfToText();
+    // const [uploadSuccess, setUploadSuccess] = useState(false);
+    const { text, error: extractError, loading, extractSuccess, extractTextFromPdf } = usePdfToText();
     const { answer, loading: qnaLoading, error: qnaError, askQuestion } = useQnA();
     const [question, setQuestion] = useState('');
+    const [chat, setChat] = useState([]); // [{role: 'user'|'ai', content: string}]
+    const chatEndRef = useRef(null);
 
 
     const handleFileChange = async (e) => {
         setError('');
-        setUploadSuccess(false);
         const file = e.target.files[0];
         if (!file) return;
-
         if (file.type !== 'application/pdf') {
             setError('Only PDF files are allowed.');
             return;
@@ -28,69 +29,101 @@ const Home = () => {
             setError('File size must be less than 2MB.');
             return;
         }
-
-        setSelectedFile(file);
-    };
-
-    const getTextFromPdf = async () => {
-        if (!selectedFile) {
-            setError('No file selected.');
-            return;
-        }
-        await extractTextFromPdf(selectedFile);
+        await extractTextFromPdf(file);
     }
 
+    // Remove getTextFromPdf, not needed anymore
+
+    // Scroll to bottom of chat when chat updates
+    React.useEffect(() => {
+        if (chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [chat]);
+
+    // Add AI answer(s) to chat when answer state updates
+    React.useEffect(() => {
+        if (answer && !qnaLoading) {
+            if (Array.isArray(answer) && answer.length > 0) {
+                setChat((prev) => [
+                    ...prev,
+                    { role: 'ai', content: answer.map(a => a.text).join('\n') }
+                ]);
+            } else if (Array.isArray(answer) && answer.length === 0) {
+                setChat((prev) => [
+                    ...prev,
+                    { role: 'ai', content: 'No answer found.' }
+                ]);
+            }
+        }
+        // eslint-disable-next-line
+    }, [answer, qnaLoading]);
+
     return (
-        <div className="home">
-            <h1>Welcome to My React SPA</h1>
-            <p>This is the home page of the application.</p>
-            <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-            />
-            <button onClick={getTextFromPdf} disabled={!selectedFile || loading}>
-                Extract PDF Text
-            </button>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {extractError && <p style={{ color: 'red' }}>{extractError}</p>}
-            {uploadSuccess && <p style={{ color: 'green' }}>Upload successful!</p>}
-            {loading && <p>Extracting text...</p>}
-            {text && (
-                <div>
-                    <h3>Extracted Text:</h3>
-                    <pre style={{whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>{text}</pre>
-                    <div style={{marginTop: '1em'}}>
-                        <input
-                            type="text"
-                            value={question}
-                            onChange={e => setQuestion(e.target.value)}
-                            placeholder="Ask a question about the PDF..."
-                            style={{width: '80%', padding: '0.5em'}}
-                        />
-                        <button
-                            onClick={() => askQuestion(question, text)}
-                            disabled={!question || qnaLoading}
-                            style={{marginLeft: '1em', padding: '0.5em 1em'}}
-                        >
-                            {qnaLoading ? 'Searching...' : 'Ask'}
-                        </button>
-                        {qnaError && <p style={{ color: 'red' }}>{qnaError}</p>}
-                        {answer && answer.length > 0 && (
-                            <div style={{marginTop: '1em'}}>
-                                <h4>Answer(s):</h4>
-                                <ul>
-                                    {answer.map((a, i) => (
-                                        <li key={i}><strong>{a.text}</strong> (score: {a.score.toFixed(3)})</li>
-                                    ))}
-                                </ul>
+        <div className="chatgpt-container">
+            <div className="chatgpt-header">
+                <h1>PDF QnA Chat</h1>
+                <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    className="chatgpt-file-input"
+                />
+                {loading && <p className="chatgpt-info">Extracting text from PDF...</p>}
+                {error && <p className="chatgpt-error">{error}</p>}
+                {extractError && <p className="chatgpt-error">{extractError}</p>}
+            </div>
+            <div className="chatgpt-chat-window">
+                {extractSuccess ? (
+                    <>
+                        {chat.length === 0 && (
+                            <div className="chatgpt-welcome">Ask anything about your PDF!</div>
+                        )}
+                        {chat.map((msg, idx) => (
+                            <div key={idx} className={`chatgpt-message ${msg.role === 'user' ? 'user' : 'ai'}`}>
+                                <div className="chatgpt-message-content">{msg.content}</div>
+                            </div>
+                        ))}
+                        {qnaLoading && (
+                            <div className="chatgpt-message ai">
+                                <div className="chatgpt-message-content">Thinking...</div>
                             </div>
                         )}
-                        {answer && answer.length === 0 && !qnaLoading && (
-                            <p>No answer found.</p>
-                        )}
-                    </div>
-                </div>
+                        <div ref={chatEndRef} />
+                    </>
+                ) : (
+                    <div className="chatgpt-welcome">Upload a PDF to start chatting!</div>
+                )}
+            </div>
+            {text && (
+                <form
+                    className="chatgpt-input-row"
+                    onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!question.trim()) return;
+                        setChat((prev) => [...prev, { role: 'user', content: question }]);
+                        setQuestion('');
+                        try {
+                            await askQuestion(question, text);
+                        } catch {}
+                    }}
+                >
+                    <input
+                        type="text"
+                        className="chatgpt-input"
+                        value={question}
+                        onChange={e => setQuestion(e.target.value)}
+                        placeholder="Ask a question about the PDF..."
+                        disabled={qnaLoading}
+                    />
+                    <button
+                        type="submit"
+                        className="chatgpt-send-btn"
+                        disabled={!question.trim() || qnaLoading}
+                    >
+                        {qnaLoading ? '...' : 'Send'}
+                    </button>
+                </form>
             )}
         </div>
     );
