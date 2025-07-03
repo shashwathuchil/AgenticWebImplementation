@@ -8,6 +8,7 @@ const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB
 
 const Home = () => {
     const [error, setError] = useState('');
+    const [fileName, setFileName] = useState('');
     const { text, error: extractError, loading, extractSuccess, extractTextFromPdf } = usePdfToText();
     const { answer, loading: qnaLoading, error: qnaError, askQuestion } = useQnA();
     const [question, setQuestion] = useState('');
@@ -27,6 +28,7 @@ const Home = () => {
             setError('File size must be less than 4MB.');
             return;
         }
+        setFileName(file.name);
         await extractTextFromPdf(file);
     }
 
@@ -75,7 +77,25 @@ const Home = () => {
                         accept="application/pdf"
                         onChange={handleFileChange}
                         className="chatgpt-file-input"
+                        key={fileName || 'file-input'}
                     />
+                    {fileName && (
+                        <div className="chatgpt-file-info">
+                            <span>{fileName}</span>
+                            <button
+                                className="chatgpt-remove-btn"
+                                onClick={() => {
+                                    setFileName('');
+                                    setChat([]);
+                                    setQuestion('');
+                                    setError('');
+                                    extractTextFromPdf('reset'); // Reset the text extraction
+                                }}
+                            >
+                                Remove File
+                            </button>
+                        </div>
+                    )}
                     {loading && <p className="chatgpt-info">Extracting text from PDF...</p>}
                     {error && <p className="chatgpt-error">{error}</p>}
                     {extractError && <p className="chatgpt-error">{extractError}</p>}
